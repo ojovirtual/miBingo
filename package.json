@@ -1,0 +1,11 @@
+{
+	"name": "mibingo",
+	"version": "1.0.0",
+	"description": "Mi Bingo",
+	"main": "js.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "ISaac Morán for Fun",
+	"license": "ISC"
+}
