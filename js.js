@@ -16,7 +16,7 @@ const requestWakeLock = async () => {
 };
 
 //definir globales
-window.CONFIG = { segundos: 4, pausa: true };
+window.CONFIG = { segundos: 8, pausa: true };
 
 window.onload = function () {
 	inicializa();
