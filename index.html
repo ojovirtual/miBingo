@@ -16,61 +16,173 @@
 		<link rel="apple-touch-icon" href="/miBingo/icon/apple-touch-icon.png" />
 		<title>Bingo!</title>
 		<link rel="manifest" href="manifest.json" />
+		<style>
+			/* Estilos para el contenedor principal */
+			.bingo-container {
+				display: flex;
+				flex-direction: column;
+				min-height: 100vh;
+				padding: 1rem;
+			}
+
+			/* Pantallas verticales (portrait) */
+			@media (orientation: portrait) {
+				.content-wrapper {
+					display: flex;
+					flex-direction: column;
+				}
+
+				.tabla-section {
+					order: 1;
+					margin-bottom: 1rem;
+				}
+
+				.numero-section {
+					order: 2;
+					margin-bottom: 1rem;
+					text-align: center;
+				}
+
+				.controles-section {
+					order: 3;
+					margin-top: auto;
+				}
+
+				.numero-display {
+					font-size: 8em !important;
+				}
+
+				.titulo-bingo {
+					font-size: 3em !important;
+				}
+			}
+
+			/* Pantallas horizontales (landscape) */
+			@media (orientation: landscape) {
+				.content-wrapper {
+					display: grid;
+					grid-template-columns: 1fr 2fr;
+					grid-template-rows: auto 1fr;
+					gap: 1rem;
+					flex: 1;
+				}
+
+				.numero-section {
+					grid-column: 1;
+					grid-row: 1 / 3;
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+				}
+
+				.tabla-section {
+					grid-column: 2;
+					grid-row: 1 / 3;
+				}
+
+				.controles-section {
+					grid-column: 1 / 3;
+					grid-row: 3;
+				}
+
+				.numero-display {
+					font-size: 10em !important;
+				}
+
+				.titulo-bingo {
+					font-size: 4em !important;
+				}
+			}
+
+			/* Ajustes para la tabla en móviles pequeños */
+			@media (max-width: 576px) {
+				.tabla-section table {
+					font-size: 0.8rem;
+				}
+
+				.titulo-bingo {
+					font-size: 2em !important;
+				}
+
+				.numero-display {
+					font-size: 5em !important;
+				}
+			}
+
+			/* Asegurar que la tabla sea responsiva */
+			.tabla-numeros {
+				width: 100%;
+				max-width: 100%;
+			}
+
+			.tabla-numeros td {
+				padding: 0.5rem;
+				font-weight: bold;
+			}
+		</style>
 	</head>
 	<body class="bg-dark">
-		<div class="container-fluid">
-			<div class="row mt-3">
-				<div class="col-4 mt-2 text-center">
-					<h1 style="font-family: 'Pushster', cursive; font-size: 5em" class="text-white">Bingo!</h1>
+		<div class="bingo-container">
+			<div class="content-wrapper">
+				<!-- Sección del número actual -->
+				<div class="numero-section">
+					<h1 style="font-family: 'Pushster', cursive;" class="text-white titulo-bingo">Bingo!</h1>
 					<h1
 						name="numero"
-						style="font-size: 6em; font-family: 'Pushster', cursive"
-						class="badge rounded-circle bg-danger"
+						style="font-family: 'Pushster', cursive"
+						class="badge rounded-circle bg-danger numero-display"
 					></h1>
 				</div>
-				<div class="col-8">
-					<table class="table table-bordered align-middle text-center bg-light" name="tabla-numeros">
+
+				<!-- Sección de la tabla de números -->
+				<div class="tabla-section">
+					<table class="table table-bordered align-middle text-center bg-light tabla-numeros" name="tabla-numeros">
 						<tbody></tbody>
 					</table>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col">
-					<button class="btn btn-primary btn-lg" onclick="pausa();" name="btnPausa">
-						<i class="bi bi-play-circle"></i> EMPEZAR
-					</button>
-				</div>
-				<div class="col">
-					<label for="rangeVelocidad" class="form-label text-white">
-					Velocidad: <span id="valorVelocidad" class="badge bg-primary">8</span> segundos
-				</label>
-					<input
-						type="range"
-						class="form-range"
-						min="2"
-						max="8"
-						step="1"
-						id="rangeVelocidad"
-						oninput="cambiaVelocidad();"
-					/>
-				</div>
-				<div class="col d-grid justify-content-end">
-					<div class="btn-group dropup">
-						<button
-							class="btn btn-danger btn-lg dropdown-toggle"
-							type="button"
-							data-bs-toggle="dropdown"
-							aria-expanded="false"
-						>
-							M&aacute;s
-						</button>
-						<ul class="dropdown-menu">
-							<li>
-								<a class="dropdown-item" href="#" onclick="if (confirm('\u00BFEmpezar de nuevo?')) reiniciar(); return false;">
-									<i class="bi bi-arrow-clockwise"></i> Reiniciar
-								</a>
-							</li>
-						</ul>
+
+				<!-- Sección de controles -->
+				<div class="controles-section">
+					<div class="row g-3">
+						<div class="col-12 col-md-4">
+							<button class="btn btn-primary btn-lg w-100" onclick="pausa();" name="btnPausa">
+								<i class="bi bi-play-circle"></i> EMPEZAR
+							</button>
+						</div>
+						<div class="col-12 col-md-4">
+							<label for="rangeVelocidad" class="form-label text-white">
+								Velocidad: <span id="valorVelocidad" class="badge bg-primary">8</span> segundos
+							</label>
+							<input
+								type="range"
+								class="form-range"
+								min="2"
+								max="8"
+								step="1"
+								id="rangeVelocidad"
+								oninput="cambiaVelocidad();"
+							/>
+						</div>
+						<div class="col-12 col-md-4 d-grid">
+							<div class="btn-group dropup">
+								<button
+									class="btn btn-danger btn-lg dropdown-toggle"
+									type="button"
+									data-bs-toggle="dropdown"
+									aria-expanded="false"
+								>
+									M&aacute;s
+								</button>
+								<ul class="dropdown-menu">
+									<li>
+										<a class="dropdown-item" href="#" onclick="if (confirm('\u00BFEmpezar de nuevo?')) reiniciar(); return false;">
+											<i class="bi bi-arrow-clockwise"></i> Reiniciar
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
