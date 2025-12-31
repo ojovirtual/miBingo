@@ -91,6 +91,7 @@ function pausa() {
 function cambiaVelocidad() {
 	let velocidad = document.querySelector('#rangeVelocidad').value;
 	window.CONFIG.segundos = velocidad;
+	document.querySelector('#valorVelocidad').textContent = velocidad;
 }
 
 function reiniciar() {
