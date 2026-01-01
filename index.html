@@ -21,8 +21,9 @@
 			.bingo-container {
 				display: flex;
 				flex-direction: column;
-				min-height: 100vh;
-				padding: 1rem;
+				height: 100vh;
+				padding: 0.5rem;
+				overflow: hidden;
 			}
 
 			/* Pantallas verticales (portrait) */
@@ -30,30 +31,40 @@
 				.content-wrapper {
 					display: flex;
 					flex-direction: column;
+					height: 100%;
 				}
 
 				.tabla-section {
 					order: 1;
-					margin-bottom: 1rem;
+					margin-bottom: 0.5rem;
+					flex: 1;
+					overflow: hidden;
+					display: flex;
+					flex-direction: column;
 				}
 
 				.numero-section {
 					order: 2;
-					margin-bottom: 1rem;
+					margin-bottom: 0.5rem;
 					text-align: center;
 				}
 
 				.controles-section {
 					order: 3;
-					margin-top: auto;
 				}
 
 				.numero-display {
-					font-size: 8em !important;
+					font-size: 5em !important;
 				}
 
 				.titulo-bingo {
-					font-size: 3em !important;
+					font-size: 2em !important;
+					margin-bottom: 0.3rem !important;
+				}
+
+				.tabla-numeros td {
+					padding: 0.25rem !important;
+					font-size: 0.75rem !important;
 				}
 			}
 
@@ -62,14 +73,14 @@
 				.content-wrapper {
 					display: grid;
 					grid-template-columns: 1fr 2fr;
-					grid-template-rows: auto 1fr;
-					gap: 1rem;
-					flex: 1;
+					grid-template-rows: 1fr auto;
+					gap: 0.5rem;
+					height: 100%;
 				}
 
 				.numero-section {
 					grid-column: 1;
-					grid-row: 1 / 3;
+					grid-row: 1;
 					display: flex;
 					flex-direction: column;
 					justify-content: center;
@@ -78,47 +89,85 @@
 
 				.tabla-section {
 					grid-column: 2;
-					grid-row: 1 / 3;
+					grid-row: 1;
+					overflow: hidden;
+					display: flex;
+					flex-direction: column;
 				}
 
 				.controles-section {
 					grid-column: 1 / 3;
-					grid-row: 3;
+					grid-row: 2;
 				}
 
 				.numero-display {
-					font-size: 10em !important;
+					font-size: 6em !important;
 				}
 
 				.titulo-bingo {
-					font-size: 4em !important;
+					font-size: 2.5em !important;
+					margin-bottom: 0.5rem !important;
+				}
+
+				.tabla-numeros td {
+					padding: 0.3rem !important;
+					font-size: 0.85rem !important;
 				}
 			}
 
 			/* Ajustes para la tabla en móviles pequeños */
 			@media (max-width: 576px) {
-				.tabla-section table {
-					font-size: 0.8rem;
+				.tabla-numeros td {
+					padding: 0.2rem !important;
+					font-size: 0.65rem !important;
 				}
 
 				.titulo-bingo {
-					font-size: 2em !important;
+					font-size: 1.5em !important;
 				}
 
 				.numero-display {
-					font-size: 5em !important;
+					font-size: 4em !important;
 				}
 			}
 
-			/* Asegurar que la tabla sea responsiva */
+			/* Asegurar que la tabla sea responsiva y se ajuste sin scroll */
 			.tabla-numeros {
 				width: 100%;
 				max-width: 100%;
+				height: 100%;
+				margin: 0;
 			}
 
 			.tabla-numeros td {
-				padding: 0.5rem;
 				font-weight: bold;
+				vertical-align: middle;
+			}
+
+			/* Estilo para el último número marcado */
+			.ultimo-numero {
+				background-color: #ffc107 !important;
+				color: #000 !important;
+				border: 2px solid #ff6b00 !important;
+				box-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
+			}
+
+			/* Controles más compactos */
+			.controles-section {
+				padding: 0.25rem 0;
+			}
+
+			.controles-section .row {
+				--bs-gutter-x: 0.5rem;
+			}
+
+			.controles-section .btn {
+				padding: 0.5rem 1rem;
+			}
+
+			.controles-section label {
+				font-size: 0.9rem;
+				margin-bottom: 0.25rem;
 			}
 		</style>
 	</head>
