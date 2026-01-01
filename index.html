@@ -152,6 +152,33 @@
 				box-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
 			}
 
+			/* Estilo para el penúltimo número marcado */
+			.penultimo-numero {
+				background-color: #17a2b8 !important;
+				color: #fff !important;
+				border: 2px solid #0c7a8a !important;
+				box-shadow: 0 0 8px rgba(23, 162, 184, 0.5);
+			}
+
+			/* Barra de progreso */
+			.progress-container {
+				margin: 0.5rem 0;
+			}
+
+			.progress {
+				height: 20px;
+				background-color: rgba(255, 255, 255, 0.2);
+				border-radius: 10px;
+				overflow: hidden;
+			}
+
+			.progress-bar {
+				height: 100%;
+				background: linear-gradient(90deg, #28a745 0%, #ffc107 50%, #dc3545 100%);
+				transition: width 0.1s linear;
+				border-radius: 10px;
+			}
+
 			/* Controles más compactos - una sola fila */
 			.controles-section {
 				padding: 0.25rem 0;
@@ -183,6 +210,11 @@
 				<!-- Sección del número actual -->
 				<div class="numero-section">
 					<h1 style="font-family: 'Pushster', cursive;" class="text-white titulo-bingo">Bingo!</h1>
+					<div class="progress-container w-100 px-3" style="max-width: 400px;">
+						<div class="progress">
+							<div class="progress-bar" id="progressBar" style="width: 0%"></div>
+						</div>
+					</div>
 					<h1
 						name="numero"
 						style="font-family: 'Pushster', cursive"
