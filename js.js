@@ -16,7 +16,14 @@ const requestWakeLock = async () => {
 };
 
 //definir globales
-window.CONFIG = { segundos: 8, pausa: true, reproduciendoAudio: false, revisandoNumeros: false };
+window.CONFIG = {
+	segundos: 8,
+	pausa: true,
+	reproduciendoAudio: false,
+	revisandoNumeros: false,
+	progresoIniciado: 0,
+	progresoIntervalo: null
+};
 
 window.onload = function () {
 	inicializa();
@@ -124,25 +131,40 @@ function generarTextoAudio(numero) {
 
 function comienza() {
 	if (window.NUMEROS === undefined) inicializa();
+
+	// Iniciar la barra de progreso
+	iniciarBarraProgreso();
+
 	window.miTimeOut = setTimeout(function () {
 		if (window.CONFIG.pausa) return;
 		let numero = sacaNumero();
 		if (numero === false) {
 			console.log('Fin!');
+			resetearBarraProgreso();
 			return;
 		}
 		console.log(numero);
 		document.querySelector('[name=numero]').innerHTML = numero;
 
-		// Quitar la clase 'ultimo-numero' del número anterior
+		// Quitar la clase 'penultimo-numero' del número anterior al anterior
+		const penultimoAnterior = document.querySelector('table tbody td.penultimo-numero');
+		if (penultimoAnterior) {
+			penultimoAnterior.classList.remove('penultimo-numero');
+		}
+
+		// El último número ahora se convierte en penúltimo
 		const ultimoAnterior = document.querySelector('table tbody td.ultimo-numero');
 		if (ultimoAnterior) {
 			ultimoAnterior.classList.remove('ultimo-numero');
+			ultimoAnterior.classList.add('penultimo-numero');
 		}
 
 		// Marcar el nuevo número con las clases correspondientes
 		const celdaNueva = document.querySelector(`table tbody td[numero='${numero}']`);
 		celdaNueva.classList.add('bg-danger', 'text-white', 'ultimo-numero');
+
+		// Pausar la barra de progreso mientras se reproduce el audio
+		pausarBarraProgreso();
 
 		// Reproducir audio y esperar a que termine antes de continuar
 		window.CONFIG.reproduciendoAudio = true;
@@ -166,6 +188,9 @@ function pausa() {
 	window.CONFIG.pausa = !window.CONFIG.pausa;
 	if (!window.CONFIG.pausa) {
 		comienza();
+	} else {
+		// Si se pausa, resetear la barra de progreso
+		resetearBarraProgreso();
 	}
 	document.querySelector('button[name=btnPausa]').innerHTML = window.CONFIG.pausa
 		? `<i class="bi bi-play-circle"></i> SIGUE`
@@ -176,6 +201,53 @@ function cambiaVelocidad() {
 	let velocidad = document.querySelector('#rangeVelocidad').value;
 	window.CONFIG.segundos = velocidad;
 	document.querySelector('#valorVelocidad').textContent = velocidad;
+}
+
+function iniciarBarraProgreso() {
+	// Resetear la barra de progreso
+	const progressBar = document.getElementById('progressBar');
+	if (!progressBar) return;
+
+	progressBar.style.width = '0%';
+	window.CONFIG.progresoIniciado = Date.now();
+
+	// Limpiar intervalo anterior si existe
+	if (window.CONFIG.progresoIntervalo) {
+		clearInterval(window.CONFIG.progresoIntervalo);
+	}
+
+	// Actualizar la barra cada 100ms
+	window.CONFIG.progresoIntervalo = setInterval(() => {
+		if (window.CONFIG.pausa || window.CONFIG.reproduciendoAudio) {
+			// Si está pausado o reproduciendo audio, no actualizar
+			return;
+		}
+
+		const tiempoTranscurrido = Date.now() - window.CONFIG.progresoIniciado;
+		const tiempoTotal = window.CONFIG.segundos * 1000;
+		const porcentaje = Math.min((tiempoTranscurrido / tiempoTotal) * 100, 100);
+
+		progressBar.style.width = porcentaje + '%';
+
+		if (porcentaje >= 100) {
+			clearInterval(window.CONFIG.progresoIntervalo);
+		}
+	}, 100);
+}
+
+function pausarBarraProgreso() {
+	if (window.CONFIG.progresoIntervalo) {
+		clearInterval(window.CONFIG.progresoIntervalo);
+		window.CONFIG.progresoIntervalo = null;
+	}
+}
+
+function resetearBarraProgreso() {
+	const progressBar = document.getElementById('progressBar');
+	if (progressBar) {
+		progressBar.style.width = '0%';
+	}
+	pausarBarraProgreso();
 }
 
 function reiniciar() {
