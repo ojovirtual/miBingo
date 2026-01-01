@@ -20,7 +20,33 @@ window.CONFIG = { segundos: 8, pausa: true };
 
 window.onload = function () {
 	inicializa();
+	configurarModalVelocidad();
 };
+
+function configurarModalVelocidad() {
+	// Obtener el modal de velocidad
+	const modalVelocidad = document.getElementById('modalVelocidad');
+
+	// Guardar el estado de pausa antes de abrir el modal
+	let pausaAnterior = false;
+
+	modalVelocidad.addEventListener('show.bs.modal', function () {
+		// Guardar el estado actual de pausa
+		pausaAnterior = window.CONFIG.pausa;
+
+		// Si no está pausado, pausarlo
+		if (!window.CONFIG.pausa) {
+			pausa();
+		}
+	});
+
+	modalVelocidad.addEventListener('hidden.bs.modal', function () {
+		// Si estaba en ejecución antes de abrir el modal, continuar
+		if (!pausaAnterior) {
+			pausa();
+		}
+	});
+}
 
 function inicializa() {
 	const aux = new Array(91);
@@ -59,6 +85,43 @@ function sacaNumero() {
 	return vuelta;
 }
 
+function generarTextoAudio(numero) {
+	// Para números del 60 al 79, decir el número completo y luego las dos cifras
+	if (numero >= 60 && numero <= 79) {
+		const unidades = ['cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
+		const decenas = {
+			60: 'sesenta',
+			61: 'sesenta y uno',
+			62: 'sesenta y dos',
+			63: 'sesenta y tres',
+			64: 'sesenta y cuatro',
+			65: 'sesenta y cinco',
+			66: 'sesenta y seis',
+			67: 'sesenta y siete',
+			68: 'sesenta y ocho',
+			69: 'sesenta y nueve',
+			70: 'setenta',
+			71: 'setenta y uno',
+			72: 'setenta y dos',
+			73: 'setenta y tres',
+			74: 'setenta y cuatro',
+			75: 'setenta y cinco',
+			76: 'setenta y seis',
+			77: 'setenta y siete',
+			78: 'setenta y ocho',
+			79: 'setenta y nueve'
+		};
+
+		const decena = Math.floor(numero / 10);
+		const unidad = numero % 10;
+
+		return `${decenas[numero]}, ${unidades[decena]}, ${unidades[unidad]}`;
+	}
+
+	// Para otros números, solo el número
+	return String(numero);
+}
+
 function comienza() {
 	if (window.NUMEROS === undefined) inicializa();
 	window.miTimeOut = setTimeout(function () {
@@ -82,7 +145,7 @@ function comienza() {
 		celdaNueva.classList.add('bg-danger', 'text-white', 'ultimo-numero');
 
 		let speech = new SpeechSynthesisUtterance();
-		speech.text = String(numero);
+		speech.text = generarTextoAudio(numero);
 		window.speechSynthesis.speak(speech);
 		comienza();
 	}, window.CONFIG.segundos * 1000);
