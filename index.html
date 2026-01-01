@@ -152,7 +152,7 @@
 				box-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
 			}
 
-			/* Controles más compactos */
+			/* Controles más compactos - una sola fila */
 			.controles-section {
 				padding: 0.25rem 0;
 			}
@@ -162,12 +162,18 @@
 			}
 
 			.controles-section .btn {
-				padding: 0.5rem 1rem;
+				padding: 0.4rem 0.8rem;
 			}
 
 			.controles-section label {
 				font-size: 0.9rem;
 				margin-bottom: 0.25rem;
+			}
+
+			/* Modal de velocidad */
+			.modal-content {
+				background-color: #343a40;
+				color: white;
 			}
 		</style>
 	</head>
@@ -193,27 +199,13 @@
 
 				<!-- Sección de controles -->
 				<div class="controles-section">
-					<div class="row g-3">
-						<div class="col-12 col-md-4">
+					<div class="row g-2">
+						<div class="col-6 col-md-6">
 							<button class="btn btn-primary btn-lg w-100" onclick="pausa();" name="btnPausa">
 								<i class="bi bi-play-circle"></i> EMPEZAR
 							</button>
 						</div>
-						<div class="col-12 col-md-4">
-							<label for="rangeVelocidad" class="form-label text-white">
-								Velocidad: <span id="valorVelocidad" class="badge bg-primary">8</span> segundos
-							</label>
-							<input
-								type="range"
-								class="form-range"
-								min="2"
-								max="8"
-								step="1"
-								id="rangeVelocidad"
-								oninput="cambiaVelocidad();"
-							/>
-						</div>
-						<div class="col-12 col-md-4 d-grid">
+						<div class="col-6 col-md-6 d-grid">
 							<div class="btn-group dropup">
 								<button
 									class="btn btn-danger btn-lg dropdown-toggle"
@@ -224,6 +216,11 @@
 									M&aacute;s
 								</button>
 								<ul class="dropdown-menu">
+									<li>
+										<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalVelocidad">
+											<i class="bi bi-speedometer2"></i> Velocidad
+										</a>
+									</li>
 									<li>
 										<a class="dropdown-item" href="#" onclick="if (confirm('\u00BFEmpezar de nuevo?')) reiniciar(); return false;">
 											<i class="bi bi-arrow-clockwise"></i> Reiniciar
@@ -236,6 +233,36 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Modal de Velocidad -->
+		<div class="modal fade" id="modalVelocidad" tabindex="-1" aria-labelledby="modalVelocidadLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="modalVelocidadLabel">
+							<i class="bi bi-speedometer2"></i> Ajustar Velocidad
+						</h5>
+						<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<label for="rangeVelocidad" class="form-label">
+							Velocidad: <span id="valorVelocidad" class="badge bg-primary">8</span> segundos
+						</label>
+						<input
+							type="range"
+							class="form-range"
+							min="2"
+							max="8"
+							step="1"
+							id="rangeVelocidad"
+							oninput="cambiaVelocidad();"
+						/>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
 	</body>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
