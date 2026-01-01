@@ -198,10 +198,7 @@ function revisarNumeros() {
 		return;
 	}
 
-	// Guardar el estado anterior del juego
-	const pausaAnterior = window.CONFIG.pausa;
-
-	// Pausar el juego
+	// Pausar el juego si no está pausado
 	if (!window.CONFIG.pausa) {
 		pausa();
 	}
@@ -221,27 +218,28 @@ function revisarNumeros() {
 		btnRevisar.innerHTML = '<i class="bi bi-hourglass-split"></i> Revisando...';
 	}
 
+	// Ordenar los números por valor ordinal (de menor a mayor)
+	const numerosOrdenados = [...window.PREMIADOS].sort((a, b) => a - b);
+	const totalNumeros = numerosOrdenados.length;
+
+	// Primero decir cuántos números han salido
+	let speechIntro = new SpeechSynthesisUtterance();
+	speechIntro.text = `Han salido ${totalNumeros} números`;
+
+	speechIntro.onend = function() {
+		// Después del mensaje inicial, comenzar a reproducir los números
+		reproducirNumero(0);
+	};
+
 	// Función recursiva para reproducir cada número con audio
 	function reproducirNumero(index) {
-		if (index >= window.PREMIADOS.length) {
-			// Terminamos de revisar todos los números
-			window.CONFIG.revisandoNumeros = false;
-
-			// Restaurar el botón de revisión
-			if (btnRevisar) {
-				btnRevisar.classList.remove('disabled');
-				btnRevisar.innerHTML = textoOriginal;
-			}
-
-			// Si el juego estaba en marcha antes de revisar, continuar
-			if (!pausaAnterior) {
-				pausa();
-			}
-
+		if (index >= numerosOrdenados.length) {
+			// Terminamos de revisar todos los números, reproducir pitido
+			reproducirPitido();
 			return;
 		}
 
-		const numero = window.PREMIADOS[index];
+		const numero = numerosOrdenados[index];
 		console.log('Revisando número:', numero);
 
 		// Mostrar el número en pantalla
@@ -262,6 +260,39 @@ function revisarNumeros() {
 		window.speechSynthesis.speak(speech);
 	}
 
-	// Comenzar a reproducir desde el primer número
-	reproducirNumero(0);
+	// Función para reproducir el pitido final
+	function reproducirPitido() {
+		// Crear un contexto de audio para el pitido
+		const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+		const oscillator = audioContext.createOscillator();
+		const gainNode = audioContext.createGain();
+
+		oscillator.connect(gainNode);
+		gainNode.connect(audioContext.destination);
+
+		oscillator.frequency.value = 800; // Frecuencia del pitido en Hz
+		oscillator.type = 'sine';
+
+		gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+		gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+		oscillator.start(audioContext.currentTime);
+		oscillator.stop(audioContext.currentTime + 0.5);
+
+		// Después del pitido, restaurar el estado
+		setTimeout(function() {
+			window.CONFIG.revisandoNumeros = false;
+
+			// Restaurar el botón de revisión
+			if (btnRevisar) {
+				btnRevisar.classList.remove('disabled');
+				btnRevisar.innerHTML = textoOriginal;
+			}
+
+			// El juego permanece pausado, el usuario debe reiniciarlo manualmente
+		}, 600);
+	}
+
+	// Iniciar con el mensaje de introducción
+	window.speechSynthesis.speak(speechIntro);
 }
