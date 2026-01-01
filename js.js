@@ -70,7 +70,17 @@ function comienza() {
 		}
 		console.log(numero);
 		document.querySelector('[name=numero]').innerHTML = numero;
-		document.querySelector(`table tbody td[numero='${numero}']`).classList.add('bg-danger', 'text-white');
+
+		// Quitar la clase 'ultimo-numero' del número anterior
+		const ultimoAnterior = document.querySelector('table tbody td.ultimo-numero');
+		if (ultimoAnterior) {
+			ultimoAnterior.classList.remove('ultimo-numero');
+		}
+
+		// Marcar el nuevo número con las clases correspondientes
+		const celdaNueva = document.querySelector(`table tbody td[numero='${numero}']`);
+		celdaNueva.classList.add('bg-danger', 'text-white', 'ultimo-numero');
+
 		let speech = new SpeechSynthesisUtterance();
 		speech.text = String(numero);
 		window.speechSynthesis.speak(speech);
