@@ -296,7 +296,7 @@ function revisarNumeros() {
 
 	// Primero decir cuántos números han salido
 	let speechIntro = new SpeechSynthesisUtterance();
-	speechIntro.text = `Han salido ${totalNumeros} números`;
+	speechIntro.text = `Han salido ${totalNumeros} numeros`;
 
 	speechIntro.onend = function() {
 		// Después del mensaje inicial, comenzar a reproducir los números
