@@ -16,7 +16,7 @@ const requestWakeLock = async () => {
 };
 
 //definir globales
-window.CONFIG = { segundos: 8, pausa: true };
+window.CONFIG = { segundos: 8, pausa: true, reproduciendoAudio: false, revisandoNumeros: false };
 
 window.onload = function () {
 	inicializa();
@@ -81,7 +81,7 @@ function sacaNumero() {
 	const vuelta = window.NUMEROS[elegido];
 	//quitar el elegido del array
 	window.NUMEROS = [...window.NUMEROS.slice(0, elegido), ...window.NUMEROS.slice(elegido + 1)];
-	window.PREMIADOS = vuelta;
+	window.PREMIADOS.push(vuelta);
 	return vuelta;
 }
 
@@ -144,10 +144,21 @@ function comienza() {
 		const celdaNueva = document.querySelector(`table tbody td[numero='${numero}']`);
 		celdaNueva.classList.add('bg-danger', 'text-white', 'ultimo-numero');
 
+		// Reproducir audio y esperar a que termine antes de continuar
+		window.CONFIG.reproduciendoAudio = true;
 		let speech = new SpeechSynthesisUtterance();
 		speech.text = generarTextoAudio(numero);
+
+		// Cuando el audio termine, marcar como no reproduciendo y continuar
+		speech.onend = function() {
+			window.CONFIG.reproduciendoAudio = false;
+			// Solo continuar si no está en pausa y no está revisando números
+			if (!window.CONFIG.pausa && !window.CONFIG.revisandoNumeros) {
+				comienza();
+			}
+		};
+
 		window.speechSynthesis.speak(speech);
-		comienza();
 	}, window.CONFIG.segundos * 1000);
 }
 
@@ -173,4 +184,84 @@ function reiniciar() {
 	clearTimeout(window.miTimeOut);
 	inicializa();*/
 	window.location.reload(true);
+}
+
+function revisarNumeros() {
+	// Si no hay números premiados, no hacer nada
+	if (window.PREMIADOS.length === 0) {
+		alert('No hay números para revisar todavía');
+		return;
+	}
+
+	// Si ya está revisando, no hacer nada
+	if (window.CONFIG.revisandoNumeros) {
+		return;
+	}
+
+	// Guardar el estado anterior del juego
+	const pausaAnterior = window.CONFIG.pausa;
+
+	// Pausar el juego
+	if (!window.CONFIG.pausa) {
+		pausa();
+	}
+
+	// Marcar que estamos revisando números
+	window.CONFIG.revisandoNumeros = true;
+
+	// Cancelar cualquier audio que esté sonando
+	window.speechSynthesis.cancel();
+
+	// Actualizar el botón de revisión para mostrar que está en proceso
+	const btnRevisar = document.querySelector('a[name=btnRevisar]');
+	const textoOriginal = btnRevisar ? btnRevisar.innerHTML : '';
+
+	if (btnRevisar) {
+		btnRevisar.classList.add('disabled');
+		btnRevisar.innerHTML = '<i class="bi bi-hourglass-split"></i> Revisando...';
+	}
+
+	// Función recursiva para reproducir cada número con audio
+	function reproducirNumero(index) {
+		if (index >= window.PREMIADOS.length) {
+			// Terminamos de revisar todos los números
+			window.CONFIG.revisandoNumeros = false;
+
+			// Restaurar el botón de revisión
+			if (btnRevisar) {
+				btnRevisar.classList.remove('disabled');
+				btnRevisar.innerHTML = textoOriginal;
+			}
+
+			// Si el juego estaba en marcha antes de revisar, continuar
+			if (!pausaAnterior) {
+				pausa();
+			}
+
+			return;
+		}
+
+		const numero = window.PREMIADOS[index];
+		console.log('Revisando número:', numero);
+
+		// Mostrar el número en pantalla
+		document.querySelector('[name=numero]').innerHTML = numero;
+
+		// Crear el speech
+		let speech = new SpeechSynthesisUtterance();
+		speech.text = generarTextoAudio(numero);
+
+		// Cuando termine este número, pasar al siguiente
+		speech.onend = function() {
+			// Esperar un poco entre números
+			setTimeout(function() {
+				reproducirNumero(index + 1);
+			}, 500);
+		};
+
+		window.speechSynthesis.speak(speech);
+	}
+
+	// Comenzar a reproducir desde el primer número
+	reproducirNumero(0);
 }
