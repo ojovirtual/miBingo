@@ -55,12 +55,59 @@ function configurarModalVelocidad() {
 	});
 }
 
+function guardarEstadoJuego() {
+	const estado = {
+		numeros: window.NUMEROS,
+		premiados: window.PREMIADOS,
+		velocidad: window.CONFIG.segundos
+	};
+	try {
+		localStorage.setItem('miBingo_estadoJuego', JSON.stringify(estado));
+	} catch (error) {
+		console.error('Error al guardar el estado del juego:', error);
+	}
+}
+
+function cargarEstadoJuego() {
+	try {
+		const estadoGuardado = localStorage.getItem('miBingo_estadoJuego');
+		if (estadoGuardado) {
+			return JSON.parse(estadoGuardado);
+		}
+	} catch (error) {
+		console.error('Error al cargar el estado del juego:', error);
+	}
+	return null;
+}
+
+function limpiarEstadoJuego() {
+	try {
+		localStorage.removeItem('miBingo_estadoJuego');
+	} catch (error) {
+		console.error('Error al limpiar el estado del juego:', error);
+	}
+}
+
 function inicializa() {
-	const aux = new Array(91);
-	const numeros = [...aux.keys()];
-	numeros.shift();
-	window.NUMEROS = numeros;
-	window.PREMIADOS = [];
+	// Intentar cargar el estado guardado
+	const estadoGuardado = cargarEstadoJuego();
+
+	if (estadoGuardado) {
+		// Restaurar el estado del juego
+		window.NUMEROS = estadoGuardado.numeros;
+		window.PREMIADOS = estadoGuardado.premiados;
+		if (estadoGuardado.velocidad !== undefined) {
+			window.CONFIG.segundos = estadoGuardado.velocidad;
+		}
+	} else {
+		// Inicializar nuevo juego
+		const aux = new Array(91);
+		const numeros = [...aux.keys()];
+		numeros.shift();
+		window.NUMEROS = numeros;
+		window.PREMIADOS = [];
+	}
+
 	// pintar la tabla
 	let tabla = document.querySelector('table[name=tabla-numeros] tbody');
 	tabla.innerHTML = '';
@@ -74,6 +121,28 @@ function inicializa() {
 	}
 	tr += '</tr>';
 	tabla.innerHTML += tr;
+
+	// Restaurar la visualización de los números premiados
+	if (window.PREMIADOS.length > 0) {
+		// Marcar todos los números premiados en la tabla
+		window.PREMIADOS.forEach((numero, index) => {
+			const celda = document.querySelector(`table tbody td[numero='${numero}']`);
+			if (celda) {
+				celda.classList.add('bg-danger', 'text-white');
+
+				// Marcar el último número
+				if (index === window.PREMIADOS.length - 1) {
+					celda.classList.add('ultimo-numero');
+					document.querySelector('[name=numero]').innerHTML = numero;
+				}
+				// Marcar el penúltimo número
+				else if (index === window.PREMIADOS.length - 2) {
+					celda.classList.add('penultimo-numero');
+				}
+			}
+		});
+	}
+
 	document.querySelector('#rangeVelocidad').value = window.CONFIG.segundos;
 }
 
@@ -89,6 +158,8 @@ function sacaNumero() {
 	//quitar el elegido del array
 	window.NUMEROS = [...window.NUMEROS.slice(0, elegido), ...window.NUMEROS.slice(elegido + 1)];
 	window.PREMIADOS.push(vuelta);
+	// Guardar el estado después de sacar un número
+	guardarEstadoJuego();
 	return vuelta;
 }
 
@@ -201,6 +272,8 @@ function cambiaVelocidad() {
 	let velocidad = document.querySelector('#rangeVelocidad').value;
 	window.CONFIG.segundos = velocidad;
 	document.querySelector('#valorVelocidad').textContent = velocidad;
+	// Guardar el estado cuando cambia la velocidad
+	guardarEstadoJuego();
 }
 
 function iniciarBarraProgreso() {
@@ -251,10 +324,9 @@ function resetearBarraProgreso() {
 }
 
 function reiniciar() {
-	/*	window.CONFIG.pausa = false;
-	document.querySelector('[name=numero]').innerHTML = '';
-	clearTimeout(window.miTimeOut);
-	inicializa();*/
+	// Limpiar el estado guardado en localStorage
+	limpiarEstadoJuego();
+	// Recargar la página para reiniciar el juego
 	window.location.reload(true);
 }
 
