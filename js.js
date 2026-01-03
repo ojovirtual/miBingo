@@ -277,7 +277,22 @@ function comienza() {
 function pausa() {
 	window.CONFIG.pausa = !window.CONFIG.pausa;
 	if (!window.CONFIG.pausa) {
-		comienza();
+		// Si hay números premiados, anunciar el último antes de continuar
+		if (window.PREMIADOS.length > 0) {
+			const ultimoNumero = window.PREMIADOS[window.PREMIADOS.length - 1];
+			let speech = new SpeechSynthesisUtterance();
+			speech.text = `El último número ha sido el ${ultimoNumero}`;
+
+			speech.onend = function() {
+				// Después de anunciar el último número, continuar con el juego
+				comienza();
+			};
+
+			window.speechSynthesis.speak(speech);
+		} else {
+			// Si no hay números premiados aún, simplemente continuar
+			comienza();
+		}
 	} else {
 		// Si se pausa, cancelar el timeout activo y resetear la barra de progreso
 		if (window.miTimeOut) {
