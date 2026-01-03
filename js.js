@@ -264,8 +264,8 @@ function pausa() {
 		resetearBarraProgreso();
 	}
 	document.querySelector('button[name=btnPausa]').innerHTML = window.CONFIG.pausa
-		? `<i class="bi bi-play-circle"></i> SIGUE`
-		: `<i class="bi bi-pause-fill"></i> PAUSA`;
+		? `<i class="bi bi-play-circle" style="font-size: 1.5rem;"></i>`
+		: `<i class="bi bi-pause-fill" style="font-size: 1.5rem;"></i>`;
 }
 
 function cambiaVelocidad() {
