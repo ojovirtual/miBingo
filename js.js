@@ -45,6 +45,15 @@ function configurarModalVelocidad() {
 		if (!window.CONFIG.pausa) {
 			pausa();
 		}
+
+		// Actualizar el estado de los botones según la velocidad actual
+		const btnMasRapido = document.querySelector('#btnMasRapido');
+		const btnMasLento = document.querySelector('#btnMasLento');
+
+		if (btnMasRapido && btnMasLento) {
+			btnMasRapido.disabled = (window.CONFIG.segundos <= 2);
+			btnMasLento.disabled = (window.CONFIG.segundos >= 8);
+		}
 	});
 
 	modalVelocidad.addEventListener('hidden.bs.modal', function () {
@@ -143,7 +152,11 @@ function inicializa() {
 		});
 	}
 
-	document.querySelector('#rangeVelocidad').value = window.CONFIG.segundos;
+	// Actualizar el valor de velocidad mostrado
+	const valorVelocidad = document.querySelector('#valorVelocidad');
+	if (valorVelocidad) {
+		valorVelocidad.textContent = window.CONFIG.segundos;
+	}
 }
 
 function sacaNumero() {
@@ -203,6 +216,12 @@ function generarTextoAudio(numero) {
 function comienza() {
 	if (window.NUMEROS === undefined) inicializa();
 
+	// Cancelar cualquier timeout anterior para evitar múltiples timeouts activos
+	if (window.miTimeOut) {
+		clearTimeout(window.miTimeOut);
+		window.miTimeOut = null;
+	}
+
 	// Iniciar la barra de progreso
 	iniciarBarraProgreso();
 
@@ -260,7 +279,11 @@ function pausa() {
 	if (!window.CONFIG.pausa) {
 		comienza();
 	} else {
-		// Si se pausa, resetear la barra de progreso
+		// Si se pausa, cancelar el timeout activo y resetear la barra de progreso
+		if (window.miTimeOut) {
+			clearTimeout(window.miTimeOut);
+			window.miTimeOut = null;
+		}
 		resetearBarraProgreso();
 	}
 	document.querySelector('button[name=btnPausa]').innerHTML = window.CONFIG.pausa
@@ -268,10 +291,26 @@ function pausa() {
 		: `<i class="bi bi-pause-fill" style="font-size: 1.5rem;"></i>`;
 }
 
-function cambiaVelocidad() {
-	let velocidad = document.querySelector('#rangeVelocidad').value;
-	window.CONFIG.segundos = velocidad;
-	document.querySelector('#valorVelocidad').textContent = velocidad;
+function cambiaVelocidad(incremento) {
+	// Cambiar la velocidad sumando o restando el incremento
+	let nuevaVelocidad = window.CONFIG.segundos + incremento;
+
+	// Limitar entre 2 y 8 segundos
+	if (nuevaVelocidad < 2) nuevaVelocidad = 2;
+	if (nuevaVelocidad > 8) nuevaVelocidad = 8;
+
+	window.CONFIG.segundos = nuevaVelocidad;
+	document.querySelector('#valorVelocidad').textContent = nuevaVelocidad;
+
+	// Deshabilitar botones según los límites
+	const btnMasRapido = document.querySelector('#btnMasRapido');
+	const btnMasLento = document.querySelector('#btnMasLento');
+
+	if (btnMasRapido && btnMasLento) {
+		btnMasRapido.disabled = (nuevaVelocidad <= 2);
+		btnMasLento.disabled = (nuevaVelocidad >= 8);
+	}
+
 	// Guardar el estado cuando cambia la velocidad
 	guardarEstadoJuego();
 }

@@ -285,18 +285,31 @@
 						<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<label for="rangeVelocidad" class="form-label">
-							Velocidad: <span id="valorVelocidad" class="badge bg-primary">8</span> segundos
-						</label>
-						<input
-							type="range"
-							class="form-range"
-							min="2"
-							max="8"
-							step="1"
-							id="rangeVelocidad"
-							oninput="cambiaVelocidad();"
-						/>
+						<div class="text-center mb-3">
+							<label class="form-label">
+								Velocidad: <span id="valorVelocidad" class="badge bg-primary">8</span> segundos
+							</label>
+						</div>
+						<div class="d-flex justify-content-center align-items-center gap-3">
+							<button
+								type="button"
+								class="btn btn-success btn-lg"
+								id="btnMasRapido"
+								onclick="cambiaVelocidad(-1);"
+								title="Más rápido (menos segundos)"
+							>
+								<i class="bi bi-dash-circle"></i> Más rápido
+							</button>
+							<button
+								type="button"
+								class="btn btn-warning btn-lg"
+								id="btnMasLento"
+								onclick="cambiaVelocidad(1);"
+								title="Más lento (más segundos)"
+							>
+								<i class="bi bi-plus-circle"></i> Más lento
+							</button>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
