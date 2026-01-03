@@ -281,7 +281,7 @@ function pausa() {
 		if (window.PREMIADOS.length > 0) {
 			const ultimoNumero = window.PREMIADOS[window.PREMIADOS.length - 1];
 			let speech = new SpeechSynthesisUtterance();
-			speech.text = `El último número ha sido el ${ultimoNumero}`;
+			speech.text = `El ultimo numero ha sido el ${ultimoNumero}`;
 
 			speech.onend = function() {
 				// Después de anunciar el último número, continuar con el juego
