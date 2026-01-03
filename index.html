@@ -26,22 +26,6 @@
 				overflow: hidden;
 			}
 
-			/* Contenedor de la tabla */
-			.tabla-section {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				overflow: auto;
-			}
-
-			.tabla-wrapper {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				max-width: 100%;
-				max-height: 100%;
-			}
-
 			/* Pantallas verticales (portrait) */
 			@media (orientation: portrait) {
 				.content-wrapper {
@@ -54,6 +38,9 @@
 					order: 1;
 					margin-bottom: 0.5rem;
 					flex: 1;
+					overflow: hidden;
+					display: flex;
+					flex-direction: column;
 				}
 
 				.numero-section {
@@ -76,6 +63,7 @@
 				}
 
 				.tabla-numeros td {
+					padding: 0.05rem !important;
 					font-size: 1rem !important;
 				}
 			}
@@ -103,6 +91,9 @@
 				.tabla-section {
 					grid-column: 2;
 					grid-row: 1 / 4;
+					overflow: hidden;
+					display: flex;
+					flex-direction: column;
 				}
 
 				.controles-section {
@@ -121,6 +112,7 @@
 				}
 
 				.tabla-numeros td {
+					padding: 0.1rem !important;
 					font-size: 1.2rem !important;
 				}
 			}
@@ -128,6 +120,7 @@
 			/* Ajustes para la tabla en móviles pequeños */
 			@media (max-width: 576px) {
 				.tabla-numeros td {
+					padding: 0.03rem !important;
 					font-size: 0.8rem !important;
 				}
 
@@ -148,17 +141,11 @@
 				margin: 0;
 				border-radius: 15px;
 				overflow: hidden;
-				table-layout: fixed;
-				transition: transform 0.3s ease;
 			}
 
 			.tabla-numeros td {
 				font-weight: bold;
 				vertical-align: middle;
-				width: 10%; /* 10 columnas = 100% / 10 */
-				aspect-ratio: 1 / 1; /* Hacer las celdas cuadradas */
-				padding: 0.2rem !important;
-				text-align: center;
 			}
 
 			/* Estilo para el último número marcado */
@@ -241,11 +228,9 @@
 
 				<!-- Sección de la tabla de números -->
 				<div class="tabla-section">
-					<div class="tabla-wrapper">
-						<table class="table table-bordered align-middle text-center bg-light tabla-numeros" name="tabla-numeros">
-							<tbody></tbody>
-						</table>
-					</div>
+					<table class="table table-bordered align-middle text-center bg-light tabla-numeros" name="tabla-numeros">
+						<tbody></tbody>
+					</table>
 				</div>
 
 				<!-- Sección de controles -->
@@ -276,11 +261,6 @@
 									<li>
 										<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalVelocidad">
 											<i class="bi bi-speedometer2"></i> Velocidad
-										</a>
-									</li>
-									<li>
-										<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalTamano">
-											<i class="bi bi-arrows-angle-expand"></i> Tama&ntilde;o tabla
 										</a>
 									</li>
 									<li>
@@ -338,51 +318,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
-		<!-- Modal de Tamaño de Tabla -->
-		<div class="modal fade" id="modalTamano" tabindex="-1" aria-labelledby="modalTamanoLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="modalTamanoLabel">
-							<i class="bi bi-arrows-angle-expand"></i> Ajustar Tama&ntilde;o de Tabla
-						</h5>
-						<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<div class="text-center mb-3">
-							<label class="form-label">
-								Tama&ntilde;o: <span id="valorTamano" class="badge bg-primary">100</span>%
-							</label>
-						</div>
-						<div class="d-flex justify-content-center align-items-center gap-3">
-							<button
-								type="button"
-								class="btn btn-success btn-lg"
-								id="btnMasPequeno"
-								onclick="cambiaTamanoTabla(-10);"
-								title="Más pequeño"
-							>
-								<i class="bi bi-dash-circle" style="font-size: 1.5rem;"></i>
-							</button>
-							<button
-								type="button"
-								class="btn btn-warning btn-lg"
-								id="btnMasGrande"
-								onclick="cambiaTamanoTabla(10);"
-								title="Más grande"
-							>
-								<i class="bi bi-plus-circle" style="font-size: 1.5rem;"></i>
-							</button>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
-					</div>
-				</div>
-			</div>
-		</div>
 	</body>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
