@@ -22,12 +22,14 @@ window.CONFIG = {
 	reproduciendoAudio: false,
 	revisandoNumeros: false,
 	progresoIniciado: 0,
-	progresoIntervalo: null
+	progresoIntervalo: null,
+	tamanoTabla: 100 // Porcentaje del tamaño disponible (50-150%)
 };
 
 window.onload = function () {
 	inicializa();
 	configurarModalVelocidad();
+	configurarModalTamano();
 };
 
 function configurarModalVelocidad() {
@@ -68,7 +70,8 @@ function guardarEstadoJuego() {
 	const estado = {
 		numeros: window.NUMEROS,
 		premiados: window.PREMIADOS,
-		velocidad: window.CONFIG.segundos
+		velocidad: window.CONFIG.segundos,
+		tamanoTabla: window.CONFIG.tamanoTabla
 	};
 	try {
 		localStorage.setItem('miBingo_estadoJuego', JSON.stringify(estado));
@@ -107,6 +110,9 @@ function inicializa() {
 		window.PREMIADOS = estadoGuardado.premiados;
 		if (estadoGuardado.velocidad !== undefined) {
 			window.CONFIG.segundos = estadoGuardado.velocidad;
+		}
+		if (estadoGuardado.tamanoTabla !== undefined) {
+			window.CONFIG.tamanoTabla = estadoGuardado.tamanoTabla;
 		}
 	} else {
 		// Inicializar nuevo juego
@@ -157,6 +163,9 @@ function inicializa() {
 	if (valorVelocidad) {
 		valorVelocidad.textContent = window.CONFIG.segundos;
 	}
+
+	// Aplicar el tamaño de la tabla
+	aplicarTamanoTabla();
 }
 
 function sacaNumero() {
@@ -328,6 +337,89 @@ function cambiaVelocidad(incremento) {
 
 	// Guardar el estado cuando cambia la velocidad
 	guardarEstadoJuego();
+}
+
+function configurarModalTamano() {
+	// Obtener el modal de tamaño
+	const modalTamano = document.getElementById('modalTamano');
+	if (!modalTamano) return;
+
+	// Guardar el estado de pausa antes de abrir el modal
+	let pausaAnterior = false;
+
+	modalTamano.addEventListener('show.bs.modal', function () {
+		// Guardar el estado actual de pausa
+		pausaAnterior = window.CONFIG.pausa;
+
+		// Si no está pausado, pausarlo
+		if (!window.CONFIG.pausa) {
+			pausa();
+		}
+
+		// Actualizar el valor mostrado
+		const valorTamano = document.querySelector('#valorTamano');
+		if (valorTamano) {
+			valorTamano.textContent = window.CONFIG.tamanoTabla;
+		}
+
+		// Actualizar el estado de los botones según el tamaño actual
+		const btnMasPequeno = document.querySelector('#btnMasPequeno');
+		const btnMasGrande = document.querySelector('#btnMasGrande');
+
+		if (btnMasPequeno && btnMasGrande) {
+			btnMasPequeno.disabled = (window.CONFIG.tamanoTabla <= 50);
+			btnMasGrande.disabled = (window.CONFIG.tamanoTabla >= 150);
+		}
+	});
+
+	modalTamano.addEventListener('hidden.bs.modal', function () {
+		// Si estaba en ejecución antes de abrir el modal, continuar
+		if (!pausaAnterior) {
+			pausa();
+		}
+	});
+}
+
+function cambiaTamanoTabla(incremento) {
+	// Cambiar el tamaño sumando o restando el incremento
+	let nuevoTamano = window.CONFIG.tamanoTabla + incremento;
+
+	// Limitar entre 50% y 150%
+	if (nuevoTamano < 50) nuevoTamano = 50;
+	if (nuevoTamano > 150) nuevoTamano = 150;
+
+	window.CONFIG.tamanoTabla = nuevoTamano;
+
+	// Actualizar el valor mostrado
+	const valorTamano = document.querySelector('#valorTamano');
+	if (valorTamano) {
+		valorTamano.textContent = nuevoTamano;
+	}
+
+	// Deshabilitar botones según los límites
+	const btnMasPequeno = document.querySelector('#btnMasPequeno');
+	const btnMasGrande = document.querySelector('#btnMasGrande');
+
+	if (btnMasPequeno && btnMasGrande) {
+		btnMasPequeno.disabled = (nuevoTamano <= 50);
+		btnMasGrande.disabled = (nuevoTamano >= 150);
+	}
+
+	// Aplicar el nuevo tamaño
+	aplicarTamanoTabla();
+
+	// Guardar el estado cuando cambia el tamaño
+	guardarEstadoJuego();
+}
+
+function aplicarTamanoTabla() {
+	const tabla = document.querySelector('table[name=tabla-numeros]');
+	if (!tabla) return;
+
+	// Aplicar el tamaño como una escala CSS
+	const escala = window.CONFIG.tamanoTabla / 100;
+	tabla.style.transform = `scale(${escala})`;
+	tabla.style.transformOrigin = 'center center';
 }
 
 function iniciarBarraProgreso() {
