@@ -413,13 +413,13 @@ function cambiaTamanoTabla(incremento) {
 }
 
 function aplicarTamanoTabla() {
-	const wrapper = document.querySelector('.tabla-wrapper');
-	if (!wrapper) return;
+	const tabla = document.querySelector('table[name=tabla-numeros]');
+	if (!tabla) return;
 
-	// Aplicar el tamaño como una escala CSS al wrapper
+	// Aplicar el tamaño como una escala CSS
 	const escala = window.CONFIG.tamanoTabla / 100;
-	wrapper.style.transform = `scale(${escala})`;
-	wrapper.style.transformOrigin = 'center center';
+	tabla.style.transform = `scale(${escala})`;
+	tabla.style.transformOrigin = 'center center';
 }
 
 function iniciarBarraProgreso() {
