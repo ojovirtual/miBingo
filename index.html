@@ -1,6 +1,6 @@
 <html lang="es">
 	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
 		<link
 			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -63,8 +63,8 @@
 				}
 
 				.tabla-numeros td {
-					padding: 0.1rem !important;
-					font-size: 0.7rem !important;
+					padding: 0.05rem !important;
+					font-size: 1rem !important;
 				}
 			}
 
@@ -73,35 +73,37 @@
 				.content-wrapper {
 					display: grid;
 					grid-template-columns: 1fr 2fr;
-					grid-template-rows: 1fr auto;
+					grid-template-rows: auto 1fr auto;
 					gap: 0.5rem;
 					height: 100%;
 				}
 
 				.numero-section {
 					grid-column: 1;
-					grid-row: 1;
+					grid-row: 1 / 3;
 					display: flex;
 					flex-direction: column;
-					justify-content: center;
+					justify-content: flex-start;
 					align-items: center;
+					padding-top: 1rem;
 				}
 
 				.tabla-section {
 					grid-column: 2;
-					grid-row: 1;
+					grid-row: 1 / 4;
 					overflow: hidden;
 					display: flex;
 					flex-direction: column;
 				}
 
 				.controles-section {
-					grid-column: 1 / 3;
-					grid-row: 2;
+					grid-column: 1;
+					grid-row: 3;
 				}
 
 				.numero-display {
 					font-size: 6em !important;
+					margin-bottom: 1rem !important;
 				}
 
 				.titulo-bingo {
@@ -110,16 +112,16 @@
 				}
 
 				.tabla-numeros td {
-					padding: 0.15rem !important;
-					font-size: 0.75rem !important;
+					padding: 0.1rem !important;
+					font-size: 1.2rem !important;
 				}
 			}
 
 			/* Ajustes para la tabla en móviles pequeños */
 			@media (max-width: 576px) {
 				.tabla-numeros td {
-					padding: 0.05rem !important;
-					font-size: 0.6rem !important;
+					padding: 0.03rem !important;
+					font-size: 0.8rem !important;
 				}
 
 				.titulo-bingo {
@@ -232,20 +234,21 @@
 				<!-- Sección de controles -->
 				<div class="controles-section">
 					<div class="row g-2">
-						<div class="col-6 col-md-6">
-							<button class="btn btn-primary btn-lg w-100" onclick="pausa();" name="btnPausa">
-								<i class="bi bi-play-circle"></i> EMPEZAR
+						<div class="col-6">
+							<button class="btn btn-primary btn-lg w-100" onclick="pausa();" name="btnPausa" title="Comenzar/Parar">
+								<i class="bi bi-play-circle" style="font-size: 1.5rem;"></i>
 							</button>
 						</div>
-						<div class="col-6 col-md-6 d-grid">
+						<div class="col-6 d-grid">
 							<div class="btn-group dropup">
 								<button
-									class="btn btn-danger btn-lg dropdown-toggle"
+									class="btn btn-secondary btn-lg dropdown-toggle"
 									type="button"
 									data-bs-toggle="dropdown"
 									aria-expanded="false"
+									title="Configuración"
 								>
-									M&aacute;s
+									<i class="bi bi-gear-fill" style="font-size: 1.5rem;"></i>
 								</button>
 								<ul class="dropdown-menu">
 									<li>
